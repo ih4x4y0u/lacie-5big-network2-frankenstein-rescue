@@ -14,13 +14,13 @@ No hay acceso SMB a los recursos compartidos.
 No es posible completar la configuración desde la herramienta oficial.
 ```
 
-En esta situación, el sistema interno instalado en los discos puede estar incompleto, dañado o en un estado que impide el arranque normal. La recuperación se realiza arrancando un sistema temporal en RAM desde red, instalando de nuevo el sistema oficial en un disco limpio y aplicando una reparación mínima antes del primer arranque normal.
+En esta situación, el sistema interno instalado en los discos puede estar incompleto, dañado o en un estado que impide el arranque normal. La recuperación se realiza arrancando un sistema temporal en RAM desde red, instalando de nuevo el sistema oficial en un disco sin particiones ni metadatos previos y aplicando una reparación mínima antes del primer arranque normal.
 
 El procedimiento validado utiliza este orden:
 
 ```text
-1. Limpiar los discos en un PC.
-2. Instalar solo un HDD limpio en la bahía 1.
+1. Inicializar la tabla de particiones de los discos en un PC.
+2. Instalar solo un HDD inicializado en la bahía 1.
 3. Preparar un PC con Ubuntu/Linux como estación de rescate.
 4. Conectar la estación de rescate y la LaCie a una red 192.168.1.0/24.
 5. Preparar CLUNC, TFTP y herramientas de diagnóstico.
@@ -58,15 +58,15 @@ Documentación paso a paso.
 
 ## Advertencia sobre datos
 
-Este procedimiento borra discos. Debe usarse únicamente con discos sin datos importantes o con datos previamente respaldados.
+Este procedimiento elimina las tablas de particiones y los metadatos existentes de los discos utilizados. Debe ejecutarse únicamente con discos sin datos importantes o con datos previamente respaldados.
 
-No inicies el proceso con los cinco discos instalados. El flujo validado utiliza **un solo disco limpio en la bahía 1**. Una vez que el Dashboard funciona, los discos restantes se añaden desde la interfaz web.
+No inicies el proceso con los cinco discos instalados. El flujo validado utiliza **un solo disco inicializado en la bahía 1**. Una vez que el Dashboard funciona, los discos restantes se añaden desde la interfaz web.
 
 ## Material necesario
 
 ```text
 LaCie 5big Network 2.
-Un disco duro limpio para la bahía 1.
+Un disco duro sin particiones previas para la bahía 1.
 Un PC con Ubuntu o Linux para actuar como estación de rescate.
 Cable Ethernet.
 Router o switch con red 192.168.1.0/24.
@@ -95,9 +95,9 @@ La red recomendada para este procedimiento es:
 
 Esta red se utiliza porque el entorno de recuperación de estos equipos LaCie trabaja habitualmente con direcciones de ese rango. El procedimiento puede adaptarse, pero si no se conocen los cambios necesarios, usa la red 192.168.1.0/24.
 
-## Paso 0. Limpiar el disco antes de instalarlo en la LaCie
+## Paso 0. Inicializar los discos antes de instalarlos en la LaCie
 
-Antes de comenzar, limpia el disco que se instalará en la bahía 1. Esto elimina particiones anteriores, metadatos RAID y firmas antiguas que pueden interferir con el proceso de recuperación.
+Antes de comenzar, elimina la tabla de particiones, las firmas de sistemas de ficheros y los metadatos RAID del disco que se instalará en la bahía 1. Esto evita que el recovery interprete estructuras antiguas como válidas.
 
 En Windows, abre `cmd` o PowerShell como administrador y usa `diskpart` con cuidado:
 
@@ -111,7 +111,7 @@ exit
 
 Cambia `X` por el número correcto del disco. Seleccionar el disco equivocado borrará otro dispositivo del PC.
 
-Limpia también los discos restantes que vayas a añadir más adelante, pero no los instales todavía en la LaCie.
+Ejecuta el mismo proceso sobre los discos restantes que vayas a añadir más adelante, pero no los instales todavía en la LaCie.
 
 ## Paso 1. Preparar físicamente la LaCie
 
@@ -119,7 +119,7 @@ Limpia también los discos restantes que vayas a añadir más adelante, pero no 
 1. Apaga la LaCie.
 2. Desconecta el cable de corriente.
 3. Retira todos los discos.
-4. Instala solo un HDD limpio en la bahía 1.
+4. Instala solo un HDD inicializado en la bahía 1.
 5. Deja vacías las bahías 2, 3, 4 y 5.
 6. Conecta la LaCie por Ethernet a la misma red que el PC Linux.
 7. Conecta la corriente, pero no enciendas todavía el equipo.
@@ -389,7 +389,7 @@ Solo después de confirmar Dashboard y sistema base:
 
 ```text
 1. Apaga desde Dashboard si es posible.
-2. Inserta los otros HDD limpios.
+2. Inserta los otros HDD inicializados.
 3. Enciende.
 4. Entra al Dashboard.
 5. Crea o reconstruye RAID desde la interfaz.
