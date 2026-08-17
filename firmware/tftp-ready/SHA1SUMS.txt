@@ -1,0 +1,7 @@
+fe4ca561674992aaea43302c63471a3ca7b70547  description.xml
+2ad0077fd1ca982922b289f08d164973a79c272c  description.sha1
+b059ce7e8af08a0f291125833b9a958141f9df2f  partition.map
+df504bdbf1a2975e42f98faf91948a04cae54e92  partition.gpt
+c064049e45632b0fd9c0bc752b18d4c480814e59  repository/bootfs.tar.lzma
+0d0d40d58f4e31559aaac2292241ce801a19ff79  repository/rootfs.tar.lzma
+3aecce82b18e6f87674f3c917fa9dc7139f48ffe  repository/uImage

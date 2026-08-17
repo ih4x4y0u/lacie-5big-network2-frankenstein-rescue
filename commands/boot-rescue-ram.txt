@@ -1,0 +1,3 @@
+setenv bootargs 'console=ttyS0,115200 static_addr=192.168.1.250 tftp_server=192.168.1.200 mode=telnet'
+tftp 0x800000 uImage-lacie-rescue
+bootm 0x800000

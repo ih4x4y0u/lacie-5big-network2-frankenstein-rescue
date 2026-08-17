@@ -1,0 +1,3 @@
+ide reset
+run boot_disk
+bootm 0x800000
