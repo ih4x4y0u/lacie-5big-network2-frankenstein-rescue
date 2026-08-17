@@ -1,89 +1,89 @@
-# LaCie 5big Network 2 Frankenstein Rescue
+# LaCie 5big Network 2 Recovery Toolkit
 
-Este repositorio sirve para recuperar una **LaCie 5big Network 2** que parece muerta desde red.
+Este repositorio documenta un procedimiento de recuperación para una **LaCie 5big Network 2** que no puede recuperarse mediante las herramientas habituales de LaCie.
 
-El caso practico que cubre es este:
+El caso cubierto es el siguiente:
 
 ```text
 La NAS enciende, pero no responde en la red.
-No sale en LaCie Network Assistant.
-No responde a ping.
-No abre Dashboard en el navegador.
-No hace recovery desde LaCie Network Assistant.
-No se puede entrar por SMB.
-No se puede configurar desde la herramienta oficial.
+LaCie Network Assistant no detecta el equipo.
+LaCie Network Assistant no consigue iniciar ni completar el proceso de recuperación.
+La dirección IP conocida no responde a ping.
+El Dashboard web no carga.
+No hay acceso SMB a los recursos compartidos.
+No es posible completar la configuración desde la herramienta oficial.
 ```
 
-En ese estado, el problema no es que falte una carpeta compartida o que el PC no la encuentre. El sistema interno de la NAS no esta arrancando bien desde los discos. La forma de recuperarla es arrancar un sistema temporal en RAM desde red, reinstalar el sistema oficial en un disco limpio y despues entrar al Dashboard para terminar la configuracion.
+En esta situación, el sistema interno instalado en los discos puede estar incompleto, dañado o en un estado que impide el arranque normal. La recuperación se realiza arrancando un sistema temporal en RAM desde red, instalando de nuevo el sistema oficial en un disco limpio y aplicando una reparación mínima antes del primer arranque normal.
 
-La receta probada usa este orden:
+El procedimiento validado utiliza este orden:
 
 ```text
 1. Limpiar los discos en un PC.
-2. Meter solo 1 HDD limpio en la bahia 1.
-3. Preparar un PC Linux/Ubuntu como maquina de rescate.
-4. Poner ese PC en la red 192.168.1.0/24.
-5. Instalar CLUNC y TFTP.
-6. Entrar al cargador Marvell/U-Boot de la LaCie.
-7. Arrancar rescue RAM por TFTP.
-8. Ejecutar el recovery seguro de 1 disco.
-9. Reiniciar y abrir Dashboard por HTTP.
-10. Anadir los otros discos desde Dashboard.
+2. Instalar solo un HDD limpio en la bahía 1.
+3. Preparar un PC con Ubuntu/Linux como estación de rescate.
+4. Conectar la estación de rescate y la LaCie a una red 192.168.1.0/24.
+5. Preparar CLUNC, TFTP y herramientas de diagnóstico.
+6. Acceder al cargador Marvell/U-Boot de la LaCie.
+7. Arrancar el entorno rescue RAM por TFTP.
+8. Ejecutar el recovery seguro de un disco.
+9. Reiniciar y acceder al Dashboard por HTTP.
+10. Añadir los discos restantes desde el Dashboard.
 ```
 
-## Para quien es este repo
+## Alcance
 
-Para quien tenga una LaCie 5big Network 2 en uno de estos estados:
+Este repositorio está pensado para escenarios en los que la recuperación normal no es suficiente:
 
 ```text
 LaCie Network Assistant no detecta la NAS.
-LaCie Network Assistant la detecta mal pero no consigue recuperar.
-La IP no responde a ping.
-El navegador no abre el Dashboard.
-La NAS no obtiene IP util por DHCP.
-El recovery oficial no termina.
-Solo se puede interactuar con el equipo usando CLUNC y el prompt Marvell>>.
+LaCie Network Assistant detecta el equipo pero no consigue recuperarlo.
+La IP conocida no responde a ping.
+El Dashboard no abre desde el navegador.
+La NAS no obtiene una IP útil por DHCP.
+El recovery oficial se interrumpe o queda incompleto.
+Solo se puede interactuar con el equipo mediante CLUNC y el prompt Marvell>>.
 ```
 
-## Que contiene
+## Contenido del repositorio
 
 ```text
 Firmware oficial LaCie 5big Network 2 2.2.12.3.
 Ficheros preparados para servidor TFTP.
-Kernel rescue RAM para arrancar la NAS sin usar el sistema instalado.
-Scripts para preparar el PC Linux de rescate.
+Kernel rescue RAM para iniciar la NAS sin depender del sistema instalado en disco.
+Scripts para preparar la estación Linux de rescate.
 Scripts para reparar el arranque instalado en el disco.
-Documentacion paso a paso.
+Documentación paso a paso.
 ```
 
-## Aviso importante
+## Advertencia sobre datos
 
-Este procedimiento borra discos. Usalo solo con discos sin datos importantes.
+Este procedimiento borra discos. Debe usarse únicamente con discos sin datos importantes o con datos previamente respaldados.
 
-No empieces con los cinco discos metidos. El flujo probado usa **solo un disco limpio en la bahia 1**. Cuando el Dashboard funciona, los demas discos se agregan desde la interfaz web.
+No inicies el proceso con los cinco discos instalados. El flujo validado utiliza **un solo disco limpio en la bahía 1**. Una vez que el Dashboard funciona, los discos restantes se añaden desde la interfaz web.
 
 ## Material necesario
 
 ```text
 LaCie 5big Network 2.
-Un disco duro limpio para la bahia 1.
-Un PC con Ubuntu o Linux para hacer de maquina de rescate.
+Un disco duro limpio para la bahía 1.
+Un PC con Ubuntu o Linux para actuar como estación de rescate.
 Cable Ethernet.
 Router o switch con red 192.168.1.0/24.
 CLUNC instalado en el PC Linux.
 Servidor TFTP en el PC Linux.
-Netcat, arp-scan, smbclient y herramientas basicas de red.
-Un navegador para abrir el Dashboard.
+Netcat, arp-scan, smbclient y herramientas básicas de red.
+Un navegador para acceder al Dashboard.
 ```
 
-Ejemplo probado:
+Ejemplo validado:
 
 ```text
-PC Linux de rescate: workstation-backup
-Interfaz Ethernet del PC Linux: enp1s0
-IP del PC Linux en la red de la LaCie: 192.168.1.200/24
+Estación Linux de rescate: workstation-backup
+Interfaz Ethernet de rescate: enp1s0
+IP de la estación de rescate: 192.168.1.200/24
 IP temporal del rescue RAM de la LaCie: 192.168.1.250
-IP normal de la LaCie tras arrancar: 192.168.1.40
+IP normal de la LaCie tras el arranque: 192.168.1.40
 MAC LaCie usada por CLUNC: 00:D0:4B:8E:54:7F
 ```
 
@@ -93,13 +93,13 @@ La red recomendada para este procedimiento es:
 192.168.1.0/24
 ```
 
-La razon es que muchos equipos LaCie de esta familia trabajan de fabrica en esa red durante procesos de rescue/recovery. Puedes adaptar el procedimiento, pero si no sabes que cambiar, usa la red 192.168.1.0/24.
+Esta red se utiliza porque el entorno de recuperación de estos equipos LaCie trabaja habitualmente con direcciones de ese rango. El procedimiento puede adaptarse, pero si no se conocen los cambios necesarios, usa la red 192.168.1.0/24.
 
-## Paso 0. Limpiar el disco antes de meterlo en la LaCie
+## Paso 0. Limpiar el disco antes de instalarlo en la LaCie
 
-Antes de empezar, limpia el disco que ira en la bahia 1. Esto elimina particiones anteriores, RAID viejo y firmas que pueden confundir al recovery.
+Antes de comenzar, limpia el disco que se instalará en la bahía 1. Esto elimina particiones anteriores, metadatos RAID y firmas antiguas que pueden interferir con el proceso de recuperación.
 
-En Windows, abre `cmd` o PowerShell como administrador y usa `diskpart` con mucho cuidado:
+En Windows, abre `cmd` o PowerShell como administrador y usa `diskpart` con cuidado:
 
 ```text
 diskpart
@@ -109,25 +109,25 @@ clean
 exit
 ```
 
-Cambia `X` por el numero correcto del disco. Si eliges mal el disco, borraras otro disco del PC.
+Cambia `X` por el número correcto del disco. Seleccionar el disco equivocado borrará otro dispositivo del PC.
 
-Para los otros discos que vayas a usar despues, haz tambien `clean`, pero no los metas todavia en la LaCie.
+Limpia también los discos restantes que vayas a añadir más adelante, pero no los instales todavía en la LaCie.
 
-## Paso 1. Preparar fisicamente la LaCie
+## Paso 1. Preparar físicamente la LaCie
 
 ```text
 1. Apaga la LaCie.
 2. Desconecta el cable de corriente.
-3. Saca todos los discos.
-4. Mete solo 1 HDD limpio en la bahia 1.
-5. Deja las bahias 2, 3, 4 y 5 vacias.
+3. Retira todos los discos.
+4. Instala solo un HDD limpio en la bahía 1.
+5. Deja vacías las bahías 2, 3, 4 y 5.
 6. Conecta la LaCie por Ethernet a la misma red que el PC Linux.
-7. Conecta corriente, pero no enciendas aun.
+7. Conecta la corriente, pero no enciendas todavía el equipo.
 ```
 
 ## Paso 2. Descargar y verificar el repositorio
 
-En el Mac o PC donde descargues el repo:
+En el Mac o PC desde el que descargues el repo:
 
 ```bash
 git clone https://github.com/ih4x4y0u/lacie-5big-network2-frankenstein-rescue.git
@@ -154,7 +154,7 @@ cd ~/lacie-5big-network2-frankenstein-rescue
 shasum -a 256 -c MANIFEST.sha256
 ```
 
-## Paso 4. Preparar Ubuntu como maquina de rescate
+## Paso 4. Preparar Ubuntu como estación de rescate
 
 En el PC Linux:
 
@@ -175,7 +175,7 @@ python3
 arp-scan
 ```
 
-Verifica que TFTP tiene los ficheros:
+Verifica que TFTP tiene los ficheros necesarios:
 
 ```bash
 ls -l /srv/tftp/uImage-lacie-rescue
@@ -198,11 +198,11 @@ drwxr-xr-x /srv/tftp
 drwxr-xr-x /srv/tftp/repository
 ```
 
-## Paso 5. Configurar red del PC Linux
+## Paso 5. Configurar la red del PC Linux
 
 El PC Linux debe tener una interfaz Ethernet en la red de la LaCie.
 
-Ejemplo probado:
+Ejemplo validado:
 
 ```text
 Interfaz: enp1s0
@@ -215,20 +215,20 @@ Comprueba:
 ip -br a
 ```
 
-Si tu interfaz no tiene IP en `192.168.1.0/24`, asignala desde NetworkManager, Netplan o la herramienta de red de tu Ubuntu.
+Si tu interfaz no tiene IP en `192.168.1.0/24`, asígnala desde NetworkManager, Netplan o la herramienta de red de tu distribución.
 
-## Paso 6. Instalar o tener CLUNC
+## Paso 6. Instalar o preparar CLUNC
 
-CLUNC es la herramienta que permite hablar con el cargador de arranque de la LaCie antes de que Linux arranque.
+CLUNC permite comunicarse con el cargador de arranque de la LaCie antes de que arranque Linux.
 
-El comando probado fue:
+El comando validado fue:
 
 ```bash
 cd ~/clunc
 sudo env PATH="$HOME/clunc/build:$PATH" ./clunc -v -m 00:D0:4B:8E:54:7F -i 192.168.1.250
 ```
 
-Si tu LaCie usa otra MAC, cambiala. En este caso la MAC usada fue:
+Si tu LaCie usa otra MAC, cámbiala. En este caso la MAC utilizada fue:
 
 ```text
 00:D0:4B:8E:54:7F
@@ -236,13 +236,13 @@ Si tu LaCie usa otra MAC, cambiala. En este caso la MAC usada fue:
 
 Deja CLUNC esperando y enciende la LaCie.
 
-Debe salir:
+Debe mostrarse:
 
 ```text
 Marvell>>
 ```
 
-Si no sale tras unos segundos, pulsa Enter una vez.
+Si no se muestra tras unos segundos, pulsa Enter una vez.
 
 ## Paso 7. Arrancar rescue RAM por TFTP
 
@@ -264,7 +264,7 @@ En otra terminal del PC Linux:
 nc 192.168.1.250 23
 ```
 
-Si ves caracteres raros, pulsa Enter una vez.
+Si se muestran caracteres extraños, pulsa Enter una vez.
 
 Debes llegar a:
 
@@ -280,17 +280,17 @@ Dentro del rescue:
 cat /proc/partitions
 ```
 
-Debe salir un solo disco, normalmente:
+Debe mostrarse un solo disco, normalmente:
 
 ```text
 sda
 ```
 
-No deben salir `sdb`, `sdc`, `sdd` ni `sde` en esta fase.
+No deben mostrarse `sdb`, `sdc`, `sdd` ni `sde` en esta fase.
 
-Si salen mas discos, apaga, deja solo el disco de bahia 1 y repite.
+Si se muestran más discos, apaga el equipo, deja solo el disco de bahía 1 y repite.
 
-## Paso 10. Lanzar el recovery seguro de 1 HDD
+## Paso 10. Lanzar el recovery seguro de un HDD
 
 Dentro del rescue:
 
@@ -300,19 +300,19 @@ tftp -g -r lacie-one-disk-safe-recovery.sh 192.168.1.200
 sh lacie-one-disk-safe-recovery.sh
 ```
 
-El script hace esto:
+El script realiza estas acciones:
 
 ```text
 Ejecuta /nas-rescue/main.sh.
-Detecta el fallo tipico de refresco tardio de /dev/sda8.
+Detecta el fallo típico de refresco tardío de /dev/sda8.
 Relanza una segunda pasada si las particiones ya existen.
 Monta /dev/sda9.
 Escribe passwd, group, shadow, gshadow y fstab.
 Verifica esos cinco ficheros.
-Hace sync.
+Ejecuta sync.
 ```
 
-Durante el proceso se pueden ver muchas lineas como estas:
+Durante el proceso pueden mostrarse muchas líneas como estas:
 
 ```text
 connect_to_notifier: connect failed: Connection refused
@@ -320,9 +320,9 @@ ERROR: send_event_notification failed
 Error when sending notification. Continue...
 ```
 
-Esos avisos son normales dentro del rescue RAM.
+Estos avisos son normales dentro del rescue RAM.
 
-Si el script termina bien, debe mostrar:
+Si el script termina correctamente, debe mostrar:
 
 ```text
 LACIE_ONE_DISK_SAFE_RECOVERY_OK
@@ -370,9 +370,9 @@ No uses HTTPS. Este firmware es antiguo y puede fallar con TLS moderno.
 En Dashboard:
 
 ```text
-1. Haz el setup inicial.
-2. Configura usuario admin.
-3. Revisa informacion de unidad.
+1. Completa el asistente inicial.
+2. Configura el usuario administrador.
+3. Revisa la información de unidad.
 4. Crea un recurso compartido simple, por ejemplo Public.
 5. Comprueba acceso SMB si lo necesitas.
 ```
@@ -385,7 +385,7 @@ smbclient -L //192.168.1.40 -U admin -m NT1 --option='client min protocol=NT1'
 
 ## Paso 14. Agregar los otros discos
 
-Solo despues de confirmar Dashboard y sistema base:
+Solo después de confirmar Dashboard y sistema base:
 
 ```text
 1. Apaga desde Dashboard si es posible.
@@ -393,16 +393,16 @@ Solo despues de confirmar Dashboard y sistema base:
 3. Enciende.
 4. Entra al Dashboard.
 5. Crea o reconstruye RAID desde la interfaz.
-6. Espera a que termine la sincronizacion.
+6. Espera a que termine la sincronización.
 ```
 
-No cortes corriente durante sincronizacion RAID.
+No cortes corriente durante la sincronización RAID.
 
 ## Errores conocidos
 
 ### `mdadm: Cannot open /dev/sda8`
 
-Puede pasar en la primera pasada porque el kernel viejo no refresca la tabla de particiones a tiempo.
+Puede ocurrir en la primera pasada porque el kernel antiguo no refresca la tabla de particiones a tiempo.
 
 El runner v2 lo gestiona relanzando una segunda pasada si `sda8`, `sda9` y `sda10` ya existen.
 
@@ -463,7 +463,7 @@ scripts/workstation/install-tftp-files.sh
 docs/00_RECOVERY_PROBADO_1_HDD.md
 ```
 
-## Estado probado
+## Estado validado
 
 Este flujo fue validado con:
 
@@ -471,7 +471,7 @@ Este flujo fue validado con:
 LaCie 5big Network 2
 Firmware capsule 2.2.12.3
 Recovery RAM por CLUNC
-1 HDD HGST 4 TB en bahia 1
+1 HDD HGST 4 TB en bahía 1
 IP rescue 192.168.1.250
 IP normal 192.168.1.40
 Dashboard por HTTP funcionando
@@ -479,6 +479,6 @@ Dashboard por HTTP funcionando
 
 ## Licencia
 
-Scripts y documentacion propia bajo MIT.
+Scripts y documentación propia bajo MIT.
 
 Firmware, capsule, GPL y componentes LaCie Seagate mantienen su origen y sus licencias correspondientes.
